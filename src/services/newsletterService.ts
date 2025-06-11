@@ -8,8 +8,6 @@ export const generateNewsletter = async (prompt: string): Promise<string> => {
     model: "gpt-4.1",
     input: prompt,
   });
-
-  
   
   return response.output_text;
 };
