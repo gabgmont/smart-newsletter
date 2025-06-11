@@ -2,6 +2,9 @@ import express from 'express';
 import dotenv from 'dotenv';
 dotenv.config();
 
+import { connectDB } from './database';
+connectDB();
+
 import userRoutes from './routes/userRoutes';
 import newsletterRoutes from './routes/newsletterRoutes';
 
