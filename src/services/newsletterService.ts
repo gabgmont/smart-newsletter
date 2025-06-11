@@ -10,5 +10,6 @@ export const generateNewsletter = async (prompt: string): Promise<string> => {
   });
 
   
+  
   return response.output_text;
 };
