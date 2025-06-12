@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface INewsletter extends Document {
   userId: string;
@@ -12,8 +12,11 @@ const NewsletterSchema: Schema = new Schema({
   userId: { type: String, required: true },
   name: { type: String, required: true },
   prompt: { type: String, required: true },
-  timeOfDay: { type: String, required: true }, // formato "HH:mm"
+  timeOfDay: { type: String, required: true },
   emailList: { type: [String], required: true },
 });
 
-export const Newsletter = mongoose.model<INewsletter>('Newsletter', NewsletterSchema);
+export const Newsletter = mongoose.model<INewsletter>(
+  "Newsletter",
+  NewsletterSchema
+);
