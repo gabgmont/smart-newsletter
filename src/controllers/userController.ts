@@ -1,10 +1,12 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import * as userService from '../services/userService';
 import generateToken from '../utils/generateToken';
+import { IUser } from '../models/user';
 
-export const login = (req: Request, res: Response): void => {
-  const { username, password } = req.body;
-  const user = userService.validateUser(username, password);
+
+export const login = async (req: Request, res: Response): Promise<void> => {
+  const { email, password } = req.body;
+  const user = await userService.validateUser(email, password);
 
   if (!user) {
     res.status(401).json({ message: 'Credenciais inválidas' });
@@ -15,17 +17,31 @@ export const login = (req: Request, res: Response): void => {
   res.json({ token });
 };
 
-export const getAll = (_req: Request, res: Response): void => {
-  res.json(userService.getAllUsers());
+export const getAll = async (_req: Request, res: Response): Promise<void> => {
+  const users = await userService.getAllUsers();
+  res.json(users);
 };
 
-export const create = (req: Request, res: Response): void => {
-  const newUser = userService.createUser(req.body);
-  res.status(201).json(newUser);
+export const getById = async (_req: Request, res: Response): Promise<void> => {
+  const { id } = _req.params;
+  const users = await userService.getUserById(id);
+  res.json(users);
 };
 
-export const update = (req: Request, res: Response): void => {
-  const updatedUser = userService.updateUser(req.params.id, req.body);
+
+export const create = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const data = req.body as Omit<IUser, '_id'>;
+    const user = await userService.createUser(data);
+    res.status(201).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const update = async (req: Request, res: Response): Promise<void> => {
+  const updatedUser = await userService.updateUser(req.params.id, req.body);
   if (!updatedUser) {
     res.status(404).json({ message: 'Usuário não encontrado' });
     return;
@@ -33,8 +49,9 @@ export const update = (req: Request, res: Response): void => {
   res.json(updatedUser);
 };
 
-export const remove = (req: Request, res: Response): void => {
-  const deleted = userService.deleteUser(req.params.id);
+
+export const remove = async (req: Request, res: Response): Promise<void> => {
+  const deleted = await userService.deleteUser(req.params.id);
   if (!deleted) {
     res.status(404).json({ message: 'Usuário não encontrado' });
     return;
